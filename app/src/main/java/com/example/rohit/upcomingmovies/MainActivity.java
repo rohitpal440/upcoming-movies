@@ -17,10 +17,10 @@ import com.example.rohit.upcomingmovies.data.MovieProvider;
 import com.example.rohit.upcomingmovies.model.Movie;
 import com.example.rohit.upcomingmovies.service.MovieService;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
 
     private final int MOVIE_LOADER = 0;
-//    private LoaderManager loaderManager;
+    Cursor mCursor = null;
     private MovieAdapter movieAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,36 +37,36 @@ public class MainActivity extends AppCompatActivity {
         ListView listView = (ListView) findViewById(R.id.listview_movie);
         listView.setAdapter(movieAdapter);
 
-//        getLoaderManager().restartLoader(MOVIE_LOADER,null,this);
-        Cursor cursor = getContentResolver().query(MovieProvider.Movies.Content_Uri,null,null,null,null);
-        movieAdapter.swapCursor(cursor);
+        getSupportLoaderManager().restartLoader(MOVIE_LOADER,null,this);
+//        Cursor cursor = getContentResolver().query(MovieProvider.Movies.Content_Uri,null,null,null,null);
+        movieAdapter.swapCursor(mCursor);
     }
 
-//    @Override
-//    public void onStart(){
-//        super.onStart();
-//        getLoaderManager().initLoader(MOVIE_LOADER,null,this);
-//    }
-//
-//    @Override
-//    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-//        return new CursorLoader(
-//                this,
-//                MovieProvider.Movies.Content_Uri,
-//                null,
-//                null,
-//                null,
-//                null
-//        );
-//    }
-//
-//    @Override
-//    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-//
-//    }
-//
-//    @Override
-//    public void onLoaderReset(Loader<Cursor> loader) {
-//
-//    }
+    @Override
+    public void onStart(){
+        super.onStart();
+        getSupportLoaderManager().initLoader(MOVIE_LOADER,null,this);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new CursorLoader(
+                this,
+                MovieProvider.Movies.Content_Uri,
+                null,
+                null,
+                null,
+                null
+        );
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        movieAdapter.swapCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
+    }
 }
